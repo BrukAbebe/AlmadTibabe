@@ -1,0 +1,45 @@
+# Node.js modules
+/node_modules/
+
+# Logs
+logs
+*.log
+*.log.*
+
+# Environment variables
+.env
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# VIM files
+*.swp
+*.swo
+
+# IDE files
+.idea/
+.vscode/
+
+# NPM cache
+.npm/
+
+# Cloudinary uploads (if any local backups)
+cloudinary-backups/
+
+# Dependency directories
+bower_components/
+
+# Optional VS Code directories
+.vscode/
+
+# Optional IntelliJ IDEA directories
+/.idea/
+
+# Temporary files
+/tmp/
+
+
+# npm debug log
+npm-debug.log*
+
