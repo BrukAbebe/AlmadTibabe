@@ -1,9 +1,9 @@
-const httpStatus = require("http-status");
-const ApiError = require("../utils");
+const { StatusCodes } = require("http-status-codes");
+const { ApiError } = require("../utils");
 
 const errorConverter = (err, req, res, next) => {
   if (!(err instanceof ApiError)) {
-    const statusCode = err.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
+    const statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
     const message = err.message || "Internal Server Error";
     err = new ApiError(statusCode, message, false, err.stack);
   }

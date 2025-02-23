@@ -1,10 +1,7 @@
-require("dotenv").config(); // Load environment variables
-
+require("dotenv").config(); 
 
 const env = process.env.NODE_ENV || "development";
-
 const apiUrl = process.env[`API_${env.toUpperCase()}_URL`] || process.env.API_LOCAL_URL || "";
-
 
 if (!apiUrl) {
   console.error("API URL is not set! Please check your environment variables.");

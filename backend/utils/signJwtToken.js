@@ -1,9 +1,8 @@
-const { sign } = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const { configs } = require('../config');
 
-
 const signToken = (payload) => {
-  const token = sign(
+  const token = jwt.sign(
     { id: payload.id, role: payload.role },
     configs.jwt.secret,
     {

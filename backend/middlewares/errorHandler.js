@@ -1,16 +1,14 @@
-const ApiError = require('../utils');
+const { StatusCodes } = require("http-status-codes");
 
 const errorHandler = (err, req, res, next) => {
-  if (process.env.NODE_ENV === 'development') {
-    console.error(err.stack);
-  }
+  console.error(err.stack);
 
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
+  const statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+  const status = statusCode >= 500 ? "error" : "fail";
 
   res.status(statusCode).json({
-    success: false,
-    message: message,
+    status,
+    message: err.message || "Something went wrong.",
     ...(process.env.NODE_ENV === 'development' && { error: err.stack })
   });
 };

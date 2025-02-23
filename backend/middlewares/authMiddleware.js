@@ -1,34 +1,44 @@
-const { verifyToken,ApiError,catchAsync } = require('../utils');
-const httpStatus = require('http-status');
+// middlewares/protect.js
+const { verifyToken } = require('../utils/verifyJwtToken');  // Correct path for import
+const { StatusCodes } = require("http-status-codes");
 const User = require('../models/User');
+const ApiError = require('../utils/ApiError');
+const catchAsync = require('../utils/catchAsync');
 
 const protect = catchAsync(async (req, res, next) => {
   let token = req.headers.authorization;
-  
-  // Check if token exists and starts with "Bearer"
+
   if (token && token.startsWith('Bearer')) {
-    token = token.split(' ')[1];
+    token = token.split(' ')[1];  
   }
 
   if (!token) {
     return next(
-      new ApiError(httpStatus.UNAUTHORIZED, 'Access denied. No token provided.')
+      new ApiError(StatusCodes.UNAUTHORIZED, 'Access denied. Please log in to continue.')
     );
   }
 
-  // Use verifyToken function to decode and verify JWT
-  const decoded = verifyToken(token);
+  let decoded;
+  try {
+    decoded = verifyToken(token); 
+  } catch (error) {
+    return next(new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid or expired token.'));
+  }
+
+  const authenticatedUser = await User.findOne({ _id: decoded.id, role: decoded.role });
   
-  // Attach user to the request object
-  req.user = await User.findById(decoded.id);
-  
-  if (!req.user) {
-    return next(new ApiError(httpStatus.UNAUTHORIZED, 'User not found'));
+  if (!authenticatedUser) {
+    return next(new ApiError(StatusCodes.UNAUTHORIZED, 'Authentication failed. Please try logging in again.'));
   }
   
-  next();  // Continue to the next middleware or route handler
+  if (authenticatedUser.role !== 'admin') {
+    return next(new ApiError(StatusCodes.FORBIDDEN, 'You do not have the necessary permissions to access this resource.'));
+  }
+  
+  req.user = authenticatedUser;
+  req.userRole = decoded.role;
+  
+  next();
 });
 
-module.exports = {
-  protect,
-};
+module.exports = { protect };

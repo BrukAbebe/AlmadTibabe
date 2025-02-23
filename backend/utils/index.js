@@ -1,7 +1,7 @@
 const ApiError = require('./ApiError');
 const catchAsync = require('./catchAsync');
 const verifyToken = require('./verifyJwtToken');
-const signToken = require('./signJwtToken');
+const { signToken } = require('./signJwtToken'); 
 
 module.exports = {
   ApiError,
@@ -9,4 +9,3 @@ module.exports = {
   verifyToken,
   signToken,
 };
-

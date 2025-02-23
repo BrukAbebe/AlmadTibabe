@@ -1,7 +1,7 @@
-const httpStatus = require('http-status');
+const { StatusCodes } = require("http-status-codes");
 
 const notFoundHandler = (req, res, next) => {
-  res.status(404).json({ 
+  res.status(StatusCodes.NOT_FOUND).json({ 
     success: false, 
     message: 'Resource not found'
   });
