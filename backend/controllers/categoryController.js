@@ -13,8 +13,6 @@ const getCategoryProductsById = catchAsync(async (req, res) => {
   const { page = 1, limit = 10 } = req.query; 
 
   const result = await categoryService.getCategoryProductsById(categoryId, page, limit);
-console.log(result);
- 
   res.status(StatusCodes.OK).json(result);
 });
 

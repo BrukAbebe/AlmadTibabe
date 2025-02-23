@@ -84,10 +84,10 @@ const getAllProducts = async (page, limit) => {
 
 const getProductById = async (productId) => {
   try {
-    const product = await Product.findById(productId);  // Find product by ID
+    const product = await Product.findById(productId);  
 
     if (!product) {
-      throw new ApiError(StatusCodes.NOT_FOUND, "Product not found");  // Handle if product is not found
+      throw new ApiError(StatusCodes.NOT_FOUND, "Product not found"); 
     }
 
     return {
@@ -95,7 +95,7 @@ const getProductById = async (productId) => {
       data: product,  
     };
   } catch (error) {
-    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message);  // Handle errors
+    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message);  
   }
 };
 
