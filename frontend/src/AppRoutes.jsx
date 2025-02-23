@@ -1,8 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import HomePage from './pages/Homepage';
-import Header from './components/Header/Header';
+import HomePage from './pages/HomePage';
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import ContactPage from "./pages/ContactPage";
