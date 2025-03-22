@@ -35,8 +35,28 @@ const getProductById = catchAsync(async (req, res) => {
   res.status(StatusCodes.OK).json(result);  
 });
 
+const deleteProduct = catchAsync(async (req, res) => {
+  const { productId } = req.params;
+
+  const result = await productService.deleteProduct(productId);
+
+  res.status(StatusCodes.OK).json(result);
+});
+
+
+const updateProduct = catchAsync(async (req, res) => {
+  const { productId } = req.params;
+  const updateData = req.body;
+
+  const result = await productService.updateProduct(productId, updateData);
+
+  res.status(StatusCodes.OK).json(result);
+});
+
 module.exports = {
   createProduct,
   getAllProducts,
   getProductById,
+  deleteProduct,
+  updateProduct,
 };

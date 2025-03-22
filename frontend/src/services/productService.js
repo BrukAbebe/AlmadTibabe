@@ -1,4 +1,4 @@
-import { addProductApi, fetchProductsApi, fetchProductByIdApi } from './../api/productApi';
+import { addProductApi, deleteProductApi,fetchProductsApi, fetchProductByIdApi,updateProductApi} from './../api/productApi';
 
 export const addProductData = async (productData) => {
   try {
@@ -11,6 +11,20 @@ export const addProductData = async (productData) => {
     throw new Error(error.message || 'Something went wrong while adding the product. Please try again later.');
   }
 };
+
+
+export const deleteProductData = async (productId) => {
+  try {
+    const data = await deleteProductApi(productId);
+    return data;
+  } catch (error) {
+    if (import.meta.env.MODE === "development") {
+      console.error("Delete Product Error (Development Mode):", error);
+    }
+    throw new Error(error.message || 'Something went wrong while deleting the product. Please try again later.');
+  }
+};
+
 
 export const GetAllProducts = async (page, limit) => {
     try {
@@ -34,5 +48,17 @@ export const GetAllProducts = async (page, limit) => {
         console.error("Fetch Product By ID Error (Development Mode):", error);
       }
       throw new Error(error.message || 'Something went wrong while fetching the product. Please try again later.');
+    }
+  };
+
+  export const updateProductData = async (productId, productData) => {
+    try {
+      const data = await updateProductApi(productId, productData);
+      return data;
+    } catch (error) {
+      if (import.meta.env.MODE === "development") {
+        console.error("Update Product Error (Development Mode):", error);
+      }
+      throw new Error(error.message || 'Something went wrong while updating the product. Please try again later.');
     }
   };

@@ -10,5 +10,7 @@ const router = express.Router();
 router.post('/create',protect, validate(productValidation.create), productController.createProduct);
 router.get("/", productController.getAllProducts);
 router.get("/:productId", productController.getProductById);
+router.delete("/:productId", protect, productController.deleteProduct);
+router.patch("/:productId", protect, validate(productValidation.update), productController.updateProduct);
 
 module.exports = router;

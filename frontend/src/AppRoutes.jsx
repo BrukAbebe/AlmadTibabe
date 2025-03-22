@@ -12,6 +12,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import AddProductPage from "./pages/AddProductPage";
 import Layout from "./components/Layout";
 import AllProductPage from "./pages/AllProductPage";
+import EditProductPage from "./pages/EditProductPage";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ children }) => {
@@ -54,6 +55,7 @@ const AppRoutes = () => {
                 </ProtectedRoute>
               }
             />
+            <Route path="/edit-product/:productId" element={<EditProductPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         </Layout>
