@@ -2,36 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { FiPackage, FiUsers, FiBarChart2, FiRefreshCw } from "react-icons/fi";
 import { GetAllProducts } from "../services/productService";
-import { fetchVercelAnalytics } from "../services/analyticsService";
 
 const DashboardPage = () => {
   const location = useLocation();
   const [successMessage, setSuccessMessage] = useState(location.state?.message);
   const [stats, setStats] = useState({
-    productCount: 0,
-    visitorCount: null // null indicates loading state
+    productCount: 0
   });
   const [loading, setLoading] = useState({
-    products: true,
-    analytics: true
+    products: true
   });
   const [error, setError] = useState(null);
   const userName = "Hasset";
-
-  const fetchAnalyticsData = async () => {
-    try {
-      setLoading(prev => ({ ...prev, analytics: true }));
-      const visits = await fetchVercelAnalytics();
-      setStats(prev => ({
-        ...prev,
-        visitorCount: visits !== null ? visits : "N/A"
-      }));
-    } catch (err) {
-      setStats(prev => ({ ...prev, visitorCount: "Error" }));
-    } finally {
-      setLoading(prev => ({ ...prev, analytics: false }));
-    }
-  };
 
   const fetchProductData = async () => {
     try {
@@ -43,15 +25,13 @@ const DashboardPage = () => {
       }));
     } catch (err) {
       setError(err.message);
-     
     } finally {
       setLoading(prev => ({ ...prev, products: false }));
     }
   };
 
   useEffect(() => {
-    // Fetch both data sources in parallel
-    Promise.all([fetchProductData(), fetchAnalyticsData()]);
+    fetchProductData();
   }, []);
 
   useEffect(() => {
@@ -91,7 +71,7 @@ const DashboardPage = () => {
       </p>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-2xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-8 max-w-2xl mx-auto">
         {/* Products Card */}
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
           <div className="flex items-center">
@@ -110,27 +90,6 @@ const DashboardPage = () => {
             </div>
           </div>
         </div>
-
-        {/* Visitors Card */}
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-[#f0f9ff] text-blue-500 mr-4">
-              <FiUsers size={24} />
-            </div>
-            <div>
-              <h3 className="text-lg font-medium text-gray-500">Site Visitors</h3>
-              {loading.analytics ? (
-                <div className="h-8 w-16 bg-gray-200 rounded animate-pulse"></div>
-              ) : (
-                <p className="text-2xl font-bold text-gray-800">
-                  {typeof stats.visitorCount === 'number' 
-                    ? stats.visitorCount.toLocaleString() 
-                    : stats.visitorCount}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Action Buttons */}
@@ -142,44 +101,6 @@ const DashboardPage = () => {
           <FiPackage className="mr-2" />
           Add Product
         </Link>
-        
-        <button 
-          onClick={fetchAnalyticsData}
-          disabled={loading.analytics}
-          className="inline-flex items-center justify-center px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium disabled:opacity-50"
-        >
-          {loading.analytics ? (
-            <FiRefreshCw className="mr-2 animate-spin" />
-          ) : (
-            <FiRefreshCw className="mr-2" />
-          )}
-          Refresh Analytics
-        </button>
-      </div>
-
-      {/* Analytics Status */}
-      <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-2xl mx-auto">
-        <div className="flex items-start">
-          <FiBarChart2 className="text-blue-500 mt-1 mr-3 flex-shrink-0" />
-          <div>
-            <h3 className="font-medium text-blue-800">
-              {stats.visitorCount === null 
-                ? "Analytics Loading..." 
-                : typeof stats.visitorCount === 'number'
-                  ? "Analytics Active"
-                  : "Analytics Disabled"}
-            </h3>
-            <p className="text-sm text-blue-600 mt-1">
-              {!import.meta.env.VITE_VERCEL_TOKEN 
-                ? "Add VITE_VERCEL_TOKEN to enable tracking"
-                : stats.visitorCount === null
-                  ? "Fetching latest visitor data..."
-                  : typeof stats.visitorCount === 'number'
-                    ? "Data from Vercel Analytics"
-                    : "Using fallback data"}
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );
