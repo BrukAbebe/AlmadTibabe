@@ -141,7 +141,7 @@ const Footer = () => {
           <div className="flex justify-center items-center gap-2">
             <img src={logo} alt="Logo" className="h-8 rounded-full" />{" "}
             {/* Rounded logo */}
-            <span className="font-bold">Almida Tibabe</span>
+            <span className="font-bold">Alimada Tibab</span>
           </div>
           <p className="mt-2 text-sm text-gray-400">
             &copy; {new Date().getFullYear()} Almida Tibabe. All rights

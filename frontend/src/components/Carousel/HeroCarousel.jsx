@@ -59,7 +59,7 @@ function HeroCarousel() {
       <div className="absolute inset-0 flex items-center justify-center z-30">
         <Link
           to="/all-products"
-          className="bg-[linear-gradient(to_right,_#fc9319,_#f57e22)] text-white font-bold py-2 px-4 md:py-3 md:px-6 lg:py-4 lg:px-8 rounded-md hover:bg-white hover:text-black hover:scale-102 transition-all text-sm md:text-base lg:text-lg"
+          className="bg-[#fc9319] text-white px-6 py-2 rounded-lg hover:bg-white hover:text-[#fc9319] hover:border-[#fc9319] border-2 border-transparent transition-all duration-300 font-bold text-sm md:text-base lg:text-lg"
         >
           Shop Now
         </Link>

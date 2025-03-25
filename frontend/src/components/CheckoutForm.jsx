@@ -1,9 +1,14 @@
 import React, { useState } from "react";
+import { useCart } from "../context/CartContext";
 import emailjs from "@emailjs/browser";
-import { FaTimes, FaPhoneAlt, FaFacebook, FaInstagram, FaWhatsapp, FaTelegram } from "react-icons/fa";
+import { FaTimes, FaPhoneAlt, FaWhatsapp, FaTelegram } from "react-icons/fa";
 
-const OrderForm = ({ product, onClose }) => {
-  const [formData, setFormData] = useState({ name: "", phone: "" });
+const CheckoutForm = ({ onClose }) => {
+  const { cartItems, cartTotal } = useCart();
+  const [formData, setFormData] = useState({ 
+    name: "", 
+    phone: "" 
+  });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -36,12 +41,12 @@ const OrderForm = ({ product, onClose }) => {
     setSuccess(false);
 
     const templateParams = {
-      form_type: "Order",
+      form_type: "Cart Checkout",
       customer_name: formData.name,
       customer_phone: formData.phone,
-      customer_email: formData.email || "Not provided",
-      product_name: product.name || "",
-      product_image: product.mainImage?.secure_url || "",
+      customer_email: "Not provided",
+      product_name:  "Checkout Order",
+      product_image: "checkour order",
       order_date: new Date().toLocaleString("en-US", {
         year: 'numeric',
         month: 'short',
@@ -49,7 +54,7 @@ const OrderForm = ({ product, onClose }) => {
         hour: '2-digit',
         minute: '2-digit'
       }),
-      customer_message: "New order placed"
+      customer_message: "New cart order placed"
     };
 
     try {
@@ -79,9 +84,11 @@ const OrderForm = ({ product, onClose }) => {
         </button>
 
         <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold text-[#121212]">Order Now</h2>
+          <h2 className="text-2xl font-bold text-[#121212]">Complete Your Order</h2>
           <div className="w-16 h-1 bg-[#fc9319] mx-auto my-2"></div>
-          <p className="text-gray-600 font-medium">{product.name}</p>
+          <p className="text-gray-600">
+            {cartItems.length} {cartItems.length === 1 ? "item" : "items"} in your cart
+          </p>
         </div>
 
         {success ? (
@@ -92,6 +99,12 @@ const OrderForm = ({ product, onClose }) => {
             <p className="text-gray-600 mb-4">
               We'll contact you shortly to confirm your order.
             </p>
+            <button
+              onClick={onClose}
+              className="bg-[#fc9319] text-white px-6 py-2 rounded-md hover:bg-[#e07c0e] transition-colors"
+            >
+              Close
+            </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -126,6 +139,7 @@ const OrderForm = ({ product, onClose }) => {
               />
             </div>
 
+            {/* Added Contact Options */}
             <div className="pt-2">
               <p className="text-sm text-gray-600 text-center mb-3">
                 Or contact us directly:
@@ -160,6 +174,13 @@ const OrderForm = ({ product, onClose }) => {
               </div>
             </div>
 
+            <div className="border-t pt-4">
+              <div className="flex justify-between font-bold text-lg">
+                <span>Total:</span>
+                <span>{cartItems[0]?.currency} {cartTotal.toLocaleString()}</span>
+              </div>
+            </div>
+
             <button
               type="submit"
               className="w-full bg-[#fc9319] text-white py-3 rounded-md hover:bg-white hover:text-[#fc9319] hover:border-[#fc9319] border-2 border-transparent transition-all duration-300 font-medium flex items-center justify-center"
@@ -175,18 +196,19 @@ const OrderForm = ({ product, onClose }) => {
                 </>
               ) : "Place Order"}
             </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full mt-2 text-[#fc9319] hover:text-[#e07c0e] text-center font-medium transition-colors"
+            >
+              Cancel
+            </button>
           </form>
         )}
-
-        <button
-          onClick={onClose}
-          className="w-full mt-4 text-[#fc9319] hover:text-[#e07c0e] text-center font-medium transition-colors"
-        >
-          {success ? "Close Window" : "Cancel Order"}
-        </button>
       </div>
     </div>
   );
 };
 
-export default OrderForm;
+export default CheckoutForm;

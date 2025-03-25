@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import { FiShoppingCart, FiMenu, FiX } from "react-icons/fi";
 import { FaPhoneAlt } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../../assets/logo.jpg";
 import { useAuth } from "./../../context/AuthContext";
+import { useCart } from '../../context/CartContext';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [isUpperNavVisible, setIsUpperNavVisible] = useState(true);
   const { isLoggedIn, logout, categories, loadingCategories } = useAuth();
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,7 +40,7 @@ const Header = () => {
         height: isUpperNavVisible ? "auto" : "3.6rem",
       }}
       transition={{ type: "spring", stiffness: 100, damping: 20 }}
-      className="fixed top-0 left-0 w-full z-50 shadow-mdb bg-[linear-gradient(to_right,_#fc9319,_#f57e22)] bg-opacity-90 mb-15 "
+      className="fixed top-0 left-0 w-full z-50 shadow-mdb bg-[linear-gradient(to_right,_#fc9319,_#f57e22)] bg-opacity-90 mb-15"
     >
       <AnimatePresence>
         {isUpperNavVisible && (
@@ -87,7 +89,7 @@ const Header = () => {
           top: isUpperNavVisible ? "0.00001rem" : "0",
         }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
-        className="bg-white z-50 bg-opacity-0 py-1.5 px-6 flex justify-between items-center  relative container mx-auto max-w-screen-xl text-sm sm:text-base md:text-lg"
+        className="bg-white z-50 bg-opacity-0 py-1.5 px-6 flex justify-between items-center relative container mx-auto max-w-screen-xl text-sm sm:text-base md:text-lg"
       >
         <Link to="/" className="flex items-center font-bold gap-2 group">
           <img
@@ -95,35 +97,58 @@ const Header = () => {
             alt="Logo"
             className="transition-all group-hover:opacity-100 h-8 w-8 rounded-full group-hover:scale-110"
           />
-          <span className=" text-white hidden md:inline transition-all   hover:text-black">
-            Almida Tibabe
+          <span className=" text-white hidden md:inline transition-all hover:scale-102 ">
+            Alimada Tibab
           </span>
         </Link>
 
         <nav className="hidden md:flex items-center text-white gap-6">
-          <Link
+          <NavLink
             to="/"
-            className="hover:bg-white hover:text-black p-2 rounded-md transition-all hover:scale-102"
+            className={({ isActive }) => 
+              `relative p-2 transition-all hover:scale-102 ${
+                isActive 
+                  ? 'after:absolute after:bottom-0 after:left-2 after:right-2 after:h-0.5 after:bg-white after:rounded-full' 
+                  : 'hover:opacity-80'
+              }`
+            }
           >
             Home
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/all-products"
-            className="hover:bg-white hover:text-black p-2 rounded-md transition-all hover:scale-102"
+            className={({ isActive }) => 
+              `relative p-2 transition-all hover:scale-102 ${
+                isActive 
+                  ? 'after:absolute after:bottom-0 after:left-2 after:right-2 after:h-0.5 after:bg-white after:rounded-full' 
+                  : 'hover:opacity-80'
+              }`
+            }
           >
             All Products
-          </Link>
+          </NavLink>
+          
           <div
             className="relative group z-20"
             onMouseEnter={() => setCategoriesOpen(true)}
             onMouseLeave={() => setCategoriesOpen(false)}
           >
-            <button
-              className="hover:bg-white hover:text-black p-2 rounded-md transition-all hover:scale-102"
-              onClick={() => setCategoriesOpen(!categoriesOpen)}
+            <NavLink
+              to={categories.length > 0 ? `/category/${categories[0].name.toLowerCase()}` : '#'}
+              end={false}
+              className={({ isActive }) => 
+                `relative p-2 transition-all hover:scale-102 ${
+                  isActive || categoriesOpen
+                    ? 'after:absolute after:bottom-0 after:left-2 after:right-2 after:h-0.5 after:bg-white after:rounded-full'
+                    : 'hover:opacity-80'
+                }`}
+              onClick={(e) => {
+                e.preventDefault();
+                setCategoriesOpen(!categoriesOpen);
+              }}
             >
               Categories
-            </button>
+            </NavLink>
             <motion.div
               initial={{ height: 0, opacity: 0, y: -10 }}
               animate={{
@@ -138,43 +163,77 @@ const Header = () => {
                 <div>Loading categories...</div>
               ) : (
                 categories.map((category) => (
-                  <Link
+                  <NavLink
                     key={category._id}
                     to={`/category/${category.name.toLowerCase()}`}
                     state={{ categoryId: category._id }}
-                    className="block px-4 py-2 hover:bg-white hover:text-black transition-all hover:scale-102 hover:text-lg"
+                    className={({ isActive }) => 
+                      `block px-4 py-2 transition-all hover:scale-102 hover:text-lg ${
+                        isActive ? 'bg-white text-black' : 'hover:bg-white hover:text-black'
+                      }`
+                    }
+                    onClick={() => {
+                      setCategoriesOpen(false);
+                      handleLinkClick();
+                    }}
                   >
                     {category.name}
-                  </Link>
+                  </NavLink>
                 ))
               )}
             </motion.div>
           </div>
-          <Link
+
+          <NavLink
             to="/contact"
-            className="hover:bg-white hover:text-black p-2 rounded-md transition-all hover:scale-102"
+            className={({ isActive }) => 
+              `relative p-2 transition-all hover:scale-102 ${
+                isActive 
+                  ? 'after:absolute after:bottom-0 after:left-2 after:right-2 after:h-0.5 after:bg-white after:rounded-full' 
+                  : 'hover:opacity-80'
+              }`
+            }
           >
             Contact Us
-          </Link>
-          <Link
-            to="/cart"
-            className="flex items-center gap-2 hover:bg-white hover:text-black p-2 rounded-md transition-all hover:scale-102"
+          </NavLink>
+          <NavLink 
+            to="/cart" 
+            className={({ isActive }) => 
+              `relative flex items-center gap-2 p-2 transition-all hover:scale-102 ${
+                isActive 
+                  ? 'after:absolute after:bottom-0 after:left-2 after:right-2 after:h-0.5 after:bg-white after:rounded-full' 
+                  : 'hover:opacity-80'
+              }`
+            }
           >
-            <FiShoppingCart size={20} />
+            <div className="relative">
+              <FiShoppingCart size={20} />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </div>
             <span>Cart</span>
-          </Link>
+          </NavLink>
           {isLoggedIn && (
-            <Link
+            <NavLink
               to="/dashboard"
-              className="hover:bg-white hover:text-black p-2 rounded-md transition-all hover:scale-102"
+              className={({ isActive }) => 
+                `relative p-2 transition-all hover:scale-102 ${
+                  isActive 
+                    ? 'after:absolute after:bottom-0 after:left-2 after:right-2 after:h-0.5 after:bg-white after:rounded-full' 
+                    : 'hover:opacity-80'
+                }`
+              }
             >
               Dashboard
-            </Link>
+            </NavLink>
           )}
         </nav>
 
         <button className="md:hidden z-50" onClick={() => setMenuOpen(true)}>
-          <FiMenu size={24} />
+          <FiMenu size={24} className="text-white" />
         </button>
       </motion.div>
 
@@ -196,23 +255,33 @@ const Header = () => {
                 <FiX size={24} />
               </button>
               <nav className="flex flex-col gap-4 text-sm sm:text-base relative">
-                <Link
+                <NavLink
                   to="/"
                   onClick={handleLinkClick}
-                  className="block py-2 px-4 active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600 transition-all active:scale-102 focus:scale-102 active:text-lg focus:text-lg"
+                  className={({ isActive }) => 
+                    `block py-2 px-4 transition-all active:scale-102 focus:scale-102 ${
+                      isActive ? 'bg-blue-100 text-blue-600' : 'active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600'
+                    }`
+                  }
                 >
                   Home
-                </Link>
-                <Link
+                </NavLink>
+                <NavLink
                   to="/all-products"
                   onClick={handleLinkClick}
-                  className="block py-2 px-4 active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600 transition-all active:scale-102 focus:scale-102 active:text-lg focus:text-lg"
+                  className={({ isActive }) => 
+                    `block py-2 px-4 transition-all active:scale-102 focus:scale-102 ${
+                      isActive ? 'bg-blue-100 text-blue-600' : 'active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600'
+                    }`
+                  }
                 >
                   All Products
-                </Link>
+                </NavLink>
                 <div className="relative">
                   <button
-                    className="block py-2 px-4 active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600 transition-all active:scale-102 focus:scale-102 active:text-lg focus:text-lg w-full text-left"
+                    className={`block py-2 px-4 w-full text-left transition-all active:scale-102 focus:scale-102 ${
+                      categoriesOpen ? 'bg-blue-100 text-blue-600' : 'active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600'
+                    }`}
                     onClick={() => setCategoriesOpen(!categoriesOpen)}
                   >
                     Categories
@@ -227,43 +296,66 @@ const Header = () => {
                         <div>Loading categories...</div>
                       ) : (
                         categories.map((category) => (
-                          <Link
+                          <NavLink
                             key={category._id}
                             to={`/category/${category.name.toLowerCase()}`}
                             state={{ categoryId: category._id }}
                             onClick={handleLinkClick}
-                            className="block py-2 px-4 active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600 transition-all active:scale-102 focus:scale-102 active:text-lg focus:text-lg"
+                            className={({ isActive }) => 
+                              `block py-2 px-4 transition-all active:scale-102 focus:scale-102 ${
+                                isActive ? 'bg-blue-100 text-blue-600' : 'active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600'
+                              }`
+                            }
                           >
                             {category.name}
-                          </Link>
+                          </NavLink>
                         ))
                       )}
                     </div>
                   </div>
                 </div>
-                <Link
+                <NavLink
                   to="/contact"
                   onClick={handleLinkClick}
-                  className="block py-2 px-4 active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600 transition-all active:scale-102 focus:scale-102 active:text-lg focus:text-lg"
+                  className={({ isActive }) => 
+                    `block py-2 px-4 transition-all active:scale-102 focus:scale-102 ${
+                      isActive ? 'bg-blue-100 text-blue-600' : 'active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600'
+                    }`
+                  }
                 >
                   Contact Us
-                </Link>
-                <Link
-                  to="/cart"
+                </NavLink>
+                <NavLink 
+                  to="/cart" 
                   onClick={handleLinkClick}
-                  className="flex items-center gap-2 py-2 px-4 active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600 transition-all active:scale-102 focus:scale-102 active:text-lg focus:text-lg"
+                  className={({ isActive }) => 
+                    `flex items-center gap-2 py-2 px-4 transition-all active:scale-102 focus:scale-102 ${
+                      isActive ? 'bg-blue-100 text-blue-600' : 'active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600'
+                    }`
+                  }
                 >
-                  <FiShoppingCart size={20} />
+                  <div className="relative">
+                    <FiShoppingCart size={20} />
+                    {cartCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {cartCount}
+                      </span>
+                    )}
+                  </div>
                   <span>Cart</span>
-                </Link>
+                </NavLink>
                 {isLoggedIn && (
-                  <Link
+                  <NavLink
                     to="/dashboard"
                     onClick={handleLinkClick}
-                    className="block py-2 px-4 active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600 transition-all active:scale-102 focus:scale-102 active:text-lg focus:text-lg"
+                    className={({ isActive }) => 
+                      `block py-2 px-4 transition-all active:scale-102 focus:scale-102 ${
+                        isActive ? 'bg-blue-100 text-blue-600' : 'active:bg-blue-100 active:text-blue-600 focus:bg-blue-100 focus:text-blue-600'
+                      }`
+                    }
                   >
                     Dashboard
-                  </Link>
+                  </NavLink>
                 )}
                 {isLoggedIn ? (
                   <button
